@@ -1,20 +1,33 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { BackEndStack } from '../lib/back-end-stack';
+import { NextJsEbookBackendStack } from '../lib/back-end-stack';
 
 const app = new cdk.App();
-new BackEndStack(app, 'BackEndStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+// Environment variables for AWS account and region
+const awsAccount = process.env.CDK_DEFAULT_ACCOUNT;
+const awsRegion = process.env.CDK_DEFAULT_REGION;
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '096649137621', region: 'us-east-1' },
+if (!awsAccount || !awsRegion) {
+  throw new Error('AWS account and region must be specified via CDK_DEFAULT_ACCOUNT and CDK_DEFAULT_REGION environment variables');
+}
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+new NextJsEbookBackendStack(app, 'NextJsEbookBackendStack', {
+  // Using environment variables for account and region
+  env: {
+    account: awsAccount,
+    region: awsRegion,
+  },
+  
+  // You can add additional props here as needed
+  description: 'Backend infrastructure stack for the NextJS ebook application',
+  
+  // Optional: Add tags for better resource management
+  tags: {
+    Environment: process.env.ENVIRONMENT || 'development',
+    Project: 'nextjs-ebook',
+    ManagedBy: 'CDK'
+  }
 });
+
+app.synth();
