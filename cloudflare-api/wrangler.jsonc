@@ -28,7 +28,8 @@
     {
       "binding": "DB",
       "database_name": "nextjs-ebook",
-      "database_id": "8bf4d54c-4488-4e26-9f1a-a001d5cb19b9"
+      "database_id": "8bf4d54c-4488-4e26-9f1a-a001d5cb19b9",
+       "migrations_dir": "drizzle/migrations"
     }
   ],
   // "ai": {

@@ -1,0 +1,66 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "2c40b874-e986-4ef6-aef0-9ea8445578d8",
+  "prevId": "d142fc6d-cd23-468f-9676-643efbc3e7db",
+  "tables": {
+    "subscribe": {
+      "name": "subscribe",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'website'"
+        },
+        "preferred_format": {
+          "name": "preferred_format",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'pdf'"
+        }
+      },
+      "indexes": {
+        "subscribe_email_unique": {
+          "name": "subscribe_email_unique",
+          "columns": [
+            "email"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

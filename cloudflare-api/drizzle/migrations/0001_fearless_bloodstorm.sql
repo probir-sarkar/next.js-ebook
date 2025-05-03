@@ -1,0 +1,1 @@
+ALTER TABLE `subscribe` DROP COLUMN `interests`;

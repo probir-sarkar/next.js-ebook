@@ -1,8 +1,8 @@
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const subscribe = sqliteTable('subscribe', {
-    email: text('email').notNull(),
+    id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
+    email: text('email').notNull().unique(),
     source: text('source').notNull().default('website'),
-    interests: text('interests', { mode: 'json' }).notNull().$type<string[]>().default([]),
     preferredFormat: text('preferred_format').notNull().default('pdf'),
 });
