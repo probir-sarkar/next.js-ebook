@@ -25,18 +25,20 @@ const subscribeSchema = z.object({
 app.post('/subscribe', zValidator('json', subscribeSchema), async (c) => {
   const { email } = c.req.valid('json')
   const db = getDb(c.env)
+  const id = crypto.randomUUID();
   // is email exists?
   const existingEmail = await db.select().from(subscribe).where(eq(subscribe.email, email)).limit(1)
   if (existingEmail.length > 0) {
     return c.json({ message: 'Email already exists' })
   }
   const result = await db.insert(subscribe).values({ email }).returning()
-  // const workflow = c.env.WORKFLOW.create({
-  //   params: {
-  //     email
-  //   }
-  // })
-  return c.json({ result })
+  const workFlow = await c.env.WORKFLOW.create({
+    params: {
+      email
+    },
+    id
+  },)
+  return c.json({ result, details: await workFlow.status(), })
 })
 
 export default app
