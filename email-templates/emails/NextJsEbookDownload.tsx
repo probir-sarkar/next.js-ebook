@@ -56,12 +56,12 @@ export const NextJsEbookDownload = ({
                     </Button>
 
                     <Text style={{ fontSize: '14px', color: '#555' }}>
-                        If the button doesn't work, copy and paste the link below into your browser:
+                        This eBook is for personal use only. It is not intended for commercial use.
                     </Text>
 
-                    <Link href={downloadLink} style={{ fontSize: '14px', color: '#1a73e8' }}>
-                        {downloadLink}
-                    </Link>
+                    <Text style={{ fontSize: '14px', color: '#f00', fontWeight: 'bold', marginTop: '10px' }}>
+                        Please note: This link will expire in 3 days.
+                    </Text>
 
                     <Hr />
 
