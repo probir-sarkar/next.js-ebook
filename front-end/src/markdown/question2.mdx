@@ -1,0 +1,14 @@
+Next.js is a React-based framework that adds powerful features like server-side rendering, static site generation, file-based routing, and more, enabling developers to build highly optimized web applications. On the other hand, React.js is a JavaScript library for building user interfaces, primarily focused on client-side rendering. Let's explore the key differences between Next.js and React.js in the table below:
+
+| Feature | Next.js | React.js |
+| --- | --- | --- |
+| **Rendering** | Supports Server-Side Rendering (SSR), Static Site Generation (SSG), and Client-Side Rendering (CSR). | Only supports Client-Side Rendering (CSR) by default. |
+| **Routing** | Built-in file-based routing system. Automatically generates routes based on the folder structure. | No built-in routing. Requires libraries like React Router. |
+| **SEO** | Excellent for SEO as it supports SSR and SSG, allowing pre-rendered content to be indexed by search engines. | Limited SEO capabilities due to client-side rendering. Additional work is needed for SEO optimization. |
+| **Performance** | Faster initial page load due to SSR, automatic code splitting, and static generation. | May have slower page loads for large apps since everything is rendered on the client. |
+| **Configuration** | Minimal configuration required. Comes with SSR, SSG, and routing out of the box. | Requires manual setup for SSR, routing, and other advanced features. |
+| **Learning Curve** | Slightly steeper due to built-in advanced features like SSR, SSG, and API routes. | Easier to learn initially, but requires additional tools for SSR and routing. |
+| **API Routes** | Built-in API routes that can handle backend logic within the same project. | No support for API routes; requires external tools for backend development. |
+| **Code Splitting** | Automatically splits code into smaller bundles, loading only what’s needed for a specific page. | Requires manual code splitting or use of lazy loading to optimize performance. |
+| **Deployment** | Optimized for easy deployment on platforms like Vercel (creators of Next.js) and supports serverless functions. | Deployment typically requires additional configuration for optimized hosting and SSR. |
+| **Image Optimization** | Has a built-in `Image` component for automatic image resizing and optimization. | Does not provide image optimization; developers need third-party libraries for that. |
