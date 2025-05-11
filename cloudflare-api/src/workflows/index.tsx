@@ -47,7 +47,7 @@ export class NextJSEbookWorkflow extends WorkflowEntrypoint<CloudflareBindings, 
                 .limit(1);
 
             if (result.length > 0) {
-                await db.update(subscribe).set({ emailSent: true }).where(eq(subscribe.email, event.payload.email));
+                await db.update(subscribe).set({ emailSent: new Date() }).where(eq(subscribe.email, event.payload.email));
                 return 'success';
             }
             return 'not_found';

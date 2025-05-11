@@ -5,5 +5,5 @@ export const subscribe = sqliteTable('subscribe', {
     email: text('email').notNull().unique(),
     source: text('source').notNull().default('website'),
     preferredFormat: text('preferred_format').notNull().default('pdf'),
-    emailSent: integer('email_sent', { mode: "boolean" }).notNull().default(false),
+    emailSent: integer('email_sent', { mode: "timestamp" }),
 });
