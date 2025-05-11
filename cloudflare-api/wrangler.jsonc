@@ -21,6 +21,7 @@
   //     "bucket_name": "my-bucket"
   //   }
   // ],
+  "keep_vars": true,
   "alias": {
     "@/*": "./src/*"
   },

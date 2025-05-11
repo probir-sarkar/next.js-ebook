@@ -1,5 +1,5 @@
 // components/emails/NextJsEbookDownload.tsx
-
+import * as React from 'react';
 import { Html } from '@react-email/html';
 import { Head } from '@react-email/head';
 import { Body } from '@react-email/body';
