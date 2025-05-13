@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import Script from "next/script";
 
 interface TurnstileWidgetProps {
@@ -8,11 +8,13 @@ interface TurnstileWidgetProps {
   onSuccess?: (token: string) => void;
   onError?: () => void;
   onExpire?: () => void;
+  theme?: "light" | "dark" | "auto";
+  size?: "normal" | "compact";
 }
 
 declare global {
   interface Window {
-    turnstile: {
+    turnstile?: {
       render: (
         element: string | HTMLElement,
         options: {
@@ -20,8 +22,11 @@ declare global {
           callback?: (token: string) => void;
           "error-callback"?: () => void;
           "expired-callback"?: () => void;
+          theme?: "light" | "dark" | "auto";
+          size?: "normal" | "compact";
         }
-      ) => void;
+      ) => string; // Returns widget ID
+      remove?: (widgetId: string) => void;
     };
   }
 }
@@ -31,33 +36,45 @@ const TurnstileWidget = ({
   onSuccess = () => {},
   onError = () => {},
   onExpire = () => {},
+  theme = "auto",
+  size = "normal",
 }: TurnstileWidgetProps) => {
   const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup Turnstile on unmount
+      if (widgetIdRef.current && window.turnstile?.remove) {
+        window.turnstile.remove(widgetIdRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
       <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        defer
         strategy="lazyOnload"
         onLoad={() => {
           if (turnstileRef.current && window.turnstile) {
-            window.turnstile.render(turnstileRef.current, {
+            const id = window.turnstile.render(turnstileRef.current, {
               sitekey,
-              callback: (token) => {
-                onSuccess(token);
-              },
-              "error-callback": () => {
-                onError();
-              },
-              "expired-callback": () => {
-                onExpire();
-              },
+              callback: onSuccess,
+              "error-callback": onError,
+              "expired-callback": onExpire,
+              theme,
+              size,
             });
+            widgetIdRef.current = id;
           }
         }}
+        onError={() => {
+          console.error("Failed to load Turnstile script");
+          onError();
+        }}
       />
-      <div ref={turnstileRef} data-size="normal" />
+      <div ref={turnstileRef} data-size={size} />
     </>
   );
 };
