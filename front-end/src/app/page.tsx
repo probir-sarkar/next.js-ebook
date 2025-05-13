@@ -1,13 +1,17 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from 'next/dynamic'
+
 import { ArrowRight, BookOpen, CheckCircle, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { SubscribeForm } from "@/components/subscribe-form";
 import Features from "@/components/features";
 import PreviewQuestions from "@/components/preview-questions";
+
+const SubscribeForm = dynamic(() => import("@/components/subscribe-form"), { ssr: false })
 
 export default function LandingPage() {
   return (

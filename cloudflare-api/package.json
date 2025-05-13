@@ -21,6 +21,6 @@
     "@types/react": "^19.1.2",
     "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
-    "wrangler": "^4.4.0"
+    "wrangler": "^4.15.0"
   }
 }
