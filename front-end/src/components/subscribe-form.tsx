@@ -1,7 +1,4 @@
 "use client";
-
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Script from "next/script";
 import TurnstileWidget from "./common/TurnstileWidget";
+import { client } from "@/config/client";
 
 const formSchema = z.object({
   name: z.string().optional(),
@@ -26,44 +24,25 @@ const formSchema = z.object({
     .string()
     .min(1, "Please enter your email")
     .email("Please enter a valid email"),
-  "cf-turnstile-response": z.string().optional(),
+  token: z.string().min(1, "Please verify you are not a robot"),
 });
 type FormType = z.infer<typeof formSchema>;
 
 export default function SubscribeForm() {
-  const [token, setToken] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const router = useRouter();
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
-      "cf-turnstile-response": "",
+      token: "",
     },
   });
 
-  // useEffect(() => {
-  //   if (typeof window !== "undefined" && window.turnstile) {
-  //     window.turnstile.render(turnstileRef.current!, {
-  //       sitekey: "1x00000000000000000000AA", // Use your actual sitekey here
-  //       callback: (token: string) => {
-  //         setToken(token)
-  //       },
-  //       "error-callback": () => {
-  //         setToken("")
-  //       },
-  //       "expired-callback": () => {
-  //         setToken("")
-  //       },
-  //     })
-  //   }
-  // }, [])
-
   async function onSubmit(data: FormType) {
-    console.log(data);
+    const response = await client.subscribe.$post({
+      json: data,
+    });
+    console.log(response);
   }
 
   return (
@@ -107,7 +86,7 @@ export default function SubscribeForm() {
 
         <FormField
           control={form.control}
-          name="cf-turnstile-response"
+          name="token"
           render={({ field: { onChange } }) => (
             <FormItem>
               <FormControl>
@@ -132,10 +111,9 @@ export default function SubscribeForm() {
         <Button
           type="submit"
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-          disabled={isLoading}
         >
           <Download className="h-4 w-4 mr-2" />
-          {isLoading ? "Processing..." : "Get Free E-Book"}
+          {form.formState.isSubmitting ? "Processing..." : "Get Free E-Book"}
         </Button>
 
         <p className="text-xs text-gray-400 text-center">
