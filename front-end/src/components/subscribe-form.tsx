@@ -91,7 +91,7 @@ export default function SubscribeForm() {
             <FormItem>
               <FormControl>
                 <TurnstileWidget
-                  sitekey="1x00000000000000000000AA"
+                  sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
                   onSuccess={(token) => {
                     onChange(token);
                   }}
