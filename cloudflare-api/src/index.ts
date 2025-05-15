@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { getDb } from "@/db";
-import { subscribe } from "@/db/schema";
+import { emailSentLog, subscribe } from "@/db/schema";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { cors } from "hono/cors";
 export { NextJSEbookWorkflow } from "./workflows";
@@ -43,24 +43,18 @@ const route = app.post(
         { success: false, message: "Invalid Turnstile Token" },
         400
       );
-    } else {
-      return c.json({ success: true, message: "Turnstile Token Valid" });
     }
 
     const db = getDb(c.env);
     const id = crypto.randomUUID();
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const existingEmail = await db
+    const sentCount = await db
       .select()
-      .from(subscribe)
-      .where(
-        and(
-          eq(subscribe.email, email),
-          gt(subscribe.emailSent, twentyFourHoursAgo)
-        )
-      )
-      .limit(1);
-    if (existingEmail.length > 0) {
+      .from(emailSentLog)
+      .leftJoin(subscribe, eq(emailSentLog.subscribeId, subscribe.id))
+      .where(gt(emailSentLog.emailSent, twentyFourHoursAgo))
+      .all();
+    if (sentCount.length > 2) {
       return c.json(
         {
           success: false,
