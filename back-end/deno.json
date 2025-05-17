@@ -11,7 +11,6 @@
     "axios": "npm:axios@^1.9.0",
     "drizzle-orm": "npm:drizzle-orm@^0.43.1",
     "hono": "npm:hono@^4.7.9",
-    "inngest": "npm:inngest@^3.36.0",
     "nodemailer": "npm:nodemailer@^7.0.3",
     "react": "npm:react@^19.1.0",
     "zod": "npm:zod@^3.24.4"
