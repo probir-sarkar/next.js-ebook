@@ -1,3 +1,3 @@
-import { Inngest } from "https://esm.sh/inngest@3.36.0";
+import { Inngest } from "inngest";
 
 export const inngest = new Inngest({ id: "my-app" });
