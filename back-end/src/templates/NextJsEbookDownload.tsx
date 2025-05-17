@@ -1,12 +1,11 @@
 // components/emails/NextJsEbookDownload.tsx
-
+/** @jsxImportSourceTypes npm:@types/react@^18.3 */
 import {
   Html,
   Head,
   Body,
   Container,
   Text,
-  Link,
   Button,
   Hr,
   Preview,

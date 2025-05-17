@@ -6,7 +6,10 @@ import "jsr:@std/dotenv/load";
 import { db } from "@/db/index.ts";
 import { emailSentLog, subscribe } from "@/db/schema.ts";
 import { and, eq, gt, lt } from "drizzle-orm";
+import { serve } from "https://esm.sh/inngest@3.36.0/hono";
 import axios from "axios";
+import { functions } from "@/inngest/index.ts";
+import { inngest } from "@/inngest/client.ts";
 // Schema for email validation
 const emailSchema = z.object({
   senderName: z.string().optional(),
@@ -23,6 +26,14 @@ const smtpPass = Deno.env.get("SMTP_PASS");
 const turnstileSecret = Deno.env.get("TURNSTILE_SECRET_KEY");
 
 const app = new Hono();
+app.on(
+  ["GET", "PUT", "POST"],
+  "/api/inngest",
+  serve({
+    client: inngest,
+    functions,
+  })
+);
 
 const subscribeSchema = z.object({
   email: z.string().email(),
@@ -45,7 +56,12 @@ const route = app.post(
       .select()
       .from(emailSentLog)
       .leftJoin(subscribe, eq(emailSentLog.subscribeId, subscribe.id))
-      .where(gt(emailSentLog.emailSent, twentyFourHoursAgo))
+      .where(
+        and(
+          gt(emailSentLog.emailSent, twentyFourHoursAgo),
+          eq(subscribe.email, email)
+        )
+      )
       .all();
     if (sentCount.length > MAX_EMAILS_PER_DAY) {
       return c.json(
@@ -83,6 +99,13 @@ const route = app.post(
       console.error("Subscription insert failed:", err);
       // Continue anyway - might be a duplicate
     }
+    // 4. Insert email sent log
+    await inngest.send({
+      name: "subscriptions/send.email",
+      data: {
+        email: email,
+      },
+    });
     return c.json(
       {
         success: true,
