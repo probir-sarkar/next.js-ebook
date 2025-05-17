@@ -9,7 +9,7 @@ interface TurnstileWidgetProps {
   onError?: () => void;
   onExpire?: () => void;
   theme?: "light" | "dark" | "auto";
-  size?: "normal" | "compact";
+  size?: "normal" | "compact" | "flexible";
 }
 
 declare global {
@@ -23,7 +23,7 @@ declare global {
           "error-callback"?: () => void;
           "expired-callback"?: () => void;
           theme?: "light" | "dark" | "auto";
-          size?: "normal" | "compact";
+          size?: "normal" | "compact" | "flexible";
         }
       ) => string; // Returns widget ID
       remove?: (widgetId: string) => void;
@@ -37,7 +37,7 @@ const TurnstileWidget = ({
   onError = () => {},
   onExpire = () => {},
   theme = "auto",
-  size = "normal",
+  size = "flexible",
 }: TurnstileWidgetProps) => {
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);

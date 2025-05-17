@@ -10,10 +10,11 @@
     "@aws-sdk/s3-request-presigner": "^3.499.0",
     "@hono/zod-validator": "^0.5.0",
     "@libsql/client": "^0.15.5",
+    "@react-email/components": "^0.0.41",
+    "axios": "^1.9.0",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
     "hono": "^4.7.9",
-    "resend": "^4.5.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {
