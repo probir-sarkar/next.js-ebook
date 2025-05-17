@@ -7,7 +7,13 @@ import { render } from "@react-email/components";
 import { NextJsEbookDownload } from "../templates/NextJsEbookDownload.tsx";
 import axios from "axios";
 import { inngest } from "./client.ts";
-
+import nodemailer, { SendMailOptions } from "nodemailer";
+// Read from Deno.env
+const smtpHost = Deno.env.get("SMTP_HOST");
+const smtpPort = Number(Deno.env.get("SMTP_PORT"));
+const smtpUser = Deno.env.get("SMTP_USER");
+const smtpPass = Deno.env.get("SMTP_PASS");
+const turnstileSecret = Deno.env.get("TURNSTILE_SECRET_KEY");
 // Constants
 const EBOOK_NAME =
   "Next.js Interview Guide - 100+ Questions and Answers to Succeed.pdf";
@@ -20,6 +26,16 @@ const S3 = new S3Client({
   credentials: {
     accessKeyId: Deno.env.get("S3_ACCESS_KEY_ID")!,
     secretAccessKey: Deno.env.get("S3_SECRET_ACCESS_KEY")!,
+  },
+});
+
+const transporter = nodemailer.createTransport({
+  host: smtpHost,
+  port: smtpPort,
+  secure: false,
+  auth: {
+    user: smtpUser,
+    pass: smtpPass,
   },
 });
 
@@ -65,12 +81,13 @@ export const sendEmail = inngest.createFunction(
           const emailHtml = await render(
             <NextJsEbookDownload name="Probir" downloadLink={signedUrl} />
           );
-          console.log(emailHtml);
-          // await axios.post(Deno.env.get("EMAIL_SEND_DOMAIN")!, {
-          //   receiver: event.data.email,
-          //   subject: "Next.js Ebook",
-          //   body: emailHtml,
-          // });
+          const mailOptions: SendMailOptions = {
+            from: `Next.js Ebook <${smtpUser}>`,
+            to: event.data.email,
+            subject: "Download Next.js Ebook",
+            html: emailHtml,
+          };
+          await transporter.sendMail(mailOptions);
           console.log("Email sent successfully");
           return true;
         } catch (error) {
