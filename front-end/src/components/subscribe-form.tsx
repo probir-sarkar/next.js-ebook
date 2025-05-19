@@ -14,9 +14,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Script from "next/script";
 import TurnstileWidget from "./common/TurnstileWidget";
 import { client } from "@/config/client";
+import { useState } from "react";
+import { motion } from "motion/react";
+import Image from "next/image";
 
 const formSchema = z.object({
   name: z.string().optional(),
@@ -29,6 +31,7 @@ const formSchema = z.object({
 type FormType = z.infer<typeof formSchema>;
 
 export default function SubscribeForm() {
+  const [submitted, setSubmitted] = useState(false);
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,87 +42,110 @@ export default function SubscribeForm() {
   });
 
   async function onSubmit(data: FormType) {
-    const response = await client.subscribe.$post({
+    const res = await client.subscribe.$post({
       json: data,
     });
-    console.log(response);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Subscription successful");
+        setSubmitted(true);
+      } else {
+        toast.error(data.message);
+      }
+    }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter your name"
-                  className="bg-gray-900 border-gray-700 focus:border-emerald-500"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email Address</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter your email"
-                  className="bg-gray-900 border-gray-700 focus:border-emerald-500"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="token"
-          render={({ field: { onChange } }) => (
-            <FormItem>
-              <FormControl>
-                <TurnstileWidget
-                  sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-                  onSuccess={(token) => {
-                    onChange(token);
-                  }}
-                  onError={() => {
-                    toast.error("Turnstile verification failed");
-                  }}
-                  onExpire={() => {
-                    toast.error("Turnstile verification expired");
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button
-          type="submit"
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+    <div className="bg-black p-6 rounded-xl border border-gray-800 h-full flex justify-center items-center">
+      {submitted ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex justify-center items-center flex-col gap-4"
         >
-          <Download className="h-4 w-4 mr-2" />
-          {form.formState.isSubmitting ? "Processing..." : "Get Free E-Book"}
-        </Button>
+          <Image src="/envelope.png" alt="envelope" height={150} width={150} />
+          <p>Please check your email</p>
+        </motion.div>
+      ) : (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your name"
+                      className="bg-gray-900 border-gray-700 focus:border-emerald-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <p className="text-xs text-gray-400 text-center">
-          We respect your privacy. Unsubscribe at any time.
-        </p>
-      </form>
-    </Form>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your email"
+                      className="bg-gray-900 border-gray-700 focus:border-emerald-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="token"
+              render={({ field: { onChange } }) => (
+                <FormItem>
+                  <FormControl>
+                    <TurnstileWidget
+                      sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                      onSuccess={(token) => {
+                        onChange(token);
+                      }}
+                      onError={() => {
+                        toast.error("Turnstile verification failed");
+                      }}
+                      onExpire={() => {
+                        toast.error("Turnstile verification expired");
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {form.formState.isSubmitting
+                ? "Processing..."
+                : "Get Free E-Book"}
+            </Button>
+
+            <p className="text-xs text-gray-400 text-center">
+              We respect your privacy. Unsubscribe at any time.
+            </p>
+          </form>
+        </Form>
+      )}
+    </div>
   );
 }

@@ -1,17 +1,17 @@
 import type { NextConfig } from "next";
-import remarkGfm from 'remark-gfm'
+import remarkGfm from "remark-gfm";
 import rehypePrettyCode, { Options } from "rehype-pretty-code";
-import createMDX from '@next/mdx'
+import createMDX from "@next/mdx";
 
 const nextConfig: NextConfig = {
   output: "export",
-  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   typescript: {
-    ignoreBuildErrors: true
-  }
+    ignoreBuildErrors: true,
+  },
+  images: { unoptimized: true },
   /* config options here */
 };
-
 
 const options: Options = {
   theme: "one-dark-pro",
@@ -23,7 +23,7 @@ const withMDX = createMDX({
     remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, options]],
   },
-})
+});
 
 // Merge MDX config with Next.js config
-export default withMDX(nextConfig)
+export default withMDX(nextConfig);

@@ -10,6 +10,7 @@ import { serve } from "https://esm.sh/inngest@3.36.0/hono";
 import axios from "axios";
 import { functions } from "@/inngest/index.ts";
 import { inngest } from "@/inngest/client.ts";
+import { cors } from "hono/cors";
 // Schema for email validation
 const emailSchema = z.object({
   senderName: z.string().optional(),
@@ -24,8 +25,15 @@ const smtpPort = Number(Deno.env.get("SMTP_PORT"));
 const smtpUser = Deno.env.get("SMTP_USER");
 const smtpPass = Deno.env.get("SMTP_PASS");
 const turnstileSecret = Deno.env.get("TURNSTILE_SECRET_KEY");
+const corsOrigins = Deno.env.get("CORS_ORIGIN") || "*";
 
 const app = new Hono();
+app.use(
+  "*",
+  cors({
+    origin: corsOrigins,
+  })
+);
 app.on(
   ["GET", "PUT", "POST"],
   "/api/inngest",
@@ -48,7 +56,6 @@ const route = app.post(
   zValidator("json", subscribeSchema),
   async (c) => {
     const { email, token } = c.req.valid("json");
-    const id = crypto.randomUUID();
 
     // 1. Check if email has been sent in the last 24 hours
     const twentyFourHoursAgo = new Date(Date.now() - TWENTY_FOUR_HOURS_MS);
@@ -110,7 +117,6 @@ const route = app.post(
       {
         success: true,
         message: "Subscription processed successfully",
-        id,
       },
       201 // Created
     );
