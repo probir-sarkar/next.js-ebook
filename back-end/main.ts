@@ -28,18 +28,19 @@ const turnstileSecret = Deno.env.get("TURNSTILE_SECRET_KEY");
 const corsOrigins = Deno.env.get("CORS_ORIGIN") || "*";
 
 const app = new Hono();
-app.use(
-  "*",
-  cors({
-    origin: corsOrigins,
-  })
-);
+
 app.on(
   ["GET", "PUT", "POST"],
   "/api/inngest",
   serve({
     client: inngest,
     functions,
+  })
+);
+app.use(
+  "*",
+  cors({
+    origin: corsOrigins,
   })
 );
 
